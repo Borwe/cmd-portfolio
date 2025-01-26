@@ -1,10 +1,9 @@
-use std::{io, str::FromStr, thread::sleep, time::Duration};
+mod flag_widget;
+use std::{io, thread::sleep, time::Duration};
 
-use crossterm::{event::{self, KeyCode, KeyEventKind}, style::Stylize};
+use crossterm::event::{self, KeyCode, KeyEventKind};
 use rand::Rng;
-use ratatui::{
-     layout::Rect, text::Line, widgets::{Block, Paragraph, Widget}, Frame
-};
+use ratatui::{prelude::*, widgets::Block};
 
 struct HelloPortfolioWidget {
     text: &'static str,
@@ -27,8 +26,8 @@ impl Widget for &HelloPortfolioWidget {
     where
         Self: Sized,
     {
-        let line = Line::from(self.text);
-        let block = Block::bordered()
+        let line = Line::from(self.text).bold().fg(Color::Magenta);
+        let block = Block::new()
             .title("🚧🚧🚧🚧Under construction🚧🚧🚧🚧")
             .title_alignment(ratatui::layout::Alignment::Center)
             .border_type(ratatui::widgets::BorderType::Thick);
@@ -41,11 +40,13 @@ impl Widget for &HelloPortfolioWidget {
 struct App {
     exit: bool,
     hello_widget: HelloPortfolioWidget,
+    kenyan_flag_widget: flag_widget::KenyanFlag
 }
 
 impl App {
     fn new() -> Self {
         App {
+            kenyan_flag_widget: flag_widget::KenyanFlag::new(),
             exit: false,
             hello_widget: HelloPortfolioWidget::new(),
         }
@@ -116,6 +117,7 @@ impl App {
 
     fn draw(&mut self, frame: &mut Frame) {
         self.update_offset_from_center(frame.area());
+        frame.render_widget(&self.kenyan_flag_widget, frame.area());
         frame.render_widget(&self.hello_widget, frame.area());
     }
 }
